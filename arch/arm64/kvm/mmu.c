@@ -1907,6 +1907,7 @@ void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen)
 void kvm_arch_flush_shadow_all(struct kvm *kvm)
 {
 	kvm_free_stage2_pgd(&kvm->arch.mmu);
+	kvm_mmu_unlock_memslot(kvm, 0, KVM_ARM_UNLOCK_MEM_ALL);
 }
 
 void kvm_arch_flush_shadow_memslot(struct kvm *kvm,
