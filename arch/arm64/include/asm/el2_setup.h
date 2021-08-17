@@ -150,7 +150,16 @@
 	ubfx	x1, x1, #ID_AA64MMFR0_FGT_SHIFT, #4
 	cbz	x1, .Lskip_fgt_\@
 
-	msr_s	SYS_HDFGRTR_EL2, xzr
+	mov	x1, xzr
+	mrs	x2, id_aa64dfr0_el1
+	ubfx	x2, x2, #ID_AA64DFR0_PMSVER_SHIFT, #4
+	cmp	x2, #3
+	b.lt	.Lset_fgt_\@
+	/* Set HDFGRTR_EL2.nPMSNEVFR_EL1 to disable the register trap */
+	orr	x1, x1, #(1 << 62)
+
+.Lset_fgt_\@:
+	msr_s	SYS_HDFGRTR_EL2, x1
 	msr_s	SYS_HDFGWTR_EL2, xzr
 	msr_s	SYS_HFGRTR_EL2, xzr
 	msr_s	SYS_HFGWTR_EL2, xzr
